@@ -11,12 +11,12 @@
 |
 */
 
-//Route::get('/', function () {
-//    return view('welcome');
-//});
-Route::get('/us', function () {
-    return 'asdasd';
+Route::get('/', function () {
+    return view('welcome');
 });
+//Route::get('/us', function () {
+//    return 'asdasd';
+//});
 //Route::get('{path}', function () {
 //    return file_get_contents(public_path('_nuxt/index.html'));
 //})->where('path', '(.*)');

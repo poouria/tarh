@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Authentication Language Lines
@@ -13,7 +12,6 @@ return [
     |
     */
 
-    'failed'   => 'Estas credenciales no coinciden con nuestros registros.',
-    'throttle' => 'Demasiados intentos de acceso. Por favor intente nuevamente en :seconds segundos.',
-
+    'failed'   => 'مشخصات وارد شده با اطلاعات ما سازگار نیست.',
+    'throttle' => 'دفعات تلاش شما برای ورود بیش از حد مجاز است. لطفا پس از :seconds ثانیه مجددا تلاش فرمایید.',
 ];

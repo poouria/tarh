@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Resources\ResError;
+use App\Http\Resources\ResUser;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use Webpatser\Uuid\Uuid;
 
 class RegisterController extends Controller
 {
-    use RegistersUsers;
 
     /**
      * Create a new controller instance.
@@ -22,45 +23,51 @@ class RegisterController extends Controller
         $this->middleware('guest');
     }
 
-    /**
-     * The user has been registered.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  mixed  $user
-     * @return mixed
-     */
-    protected function registered(Request $request, $user)
+    public function register(Request $request)
     {
-        return $user;
-    }
-
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name' => 'required|max:255',
+        $validator = Validator::make($request->all(),[
+            'username' => 'required|max:255|unique:users',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|min:6|confirmed',
+            'avatar' => 'mimes:jpeg,jpg,JPG,png|max:3000',
+            'status' => 'boolean',
         ]);
-    }
+        if ($validator->fails()){
+            return new ResError(['error' => $validator->errors(), 'status' => 400]);
+        }
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return User
-     */
-    protected function create(array $data)
-    {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-        ]);
+        if ($request->status == '1'){
+            $request['status']= 1;
+        }
+        else if ($request->status == '0'){
+            $request['status']= 0;
+        }else{
+            $request['status']= 1;
+        }
+
+        $avatarName= Uuid::generate()->string;
+        if( $request->avatar !=null){
+            $avatar=$request->file('avatar');
+            $ext = $request->file('avatar')->extension();
+            $avatarName = $avatarName . '.' .$ext ;
+            $avatar->move('images/users/avatars',$avatarName);
+        }
+        try {
+            $user = new User([
+                'email' => $request->email,
+                'username' => $request->username,
+                'password' => bcrypt($request->password),
+                'avatar' => $avatarName,
+                'status' => $request->status,
+            ]);
+            $user->save();
+
+        } catch(\Illuminate\Database\QueryException $ex){
+            if (public_path() . env("USER_AVATAR_URL") . $avatarName){
+                unlink(public_path() . env("USER_AVATAR_URL") . $avatarName);
+            }
+            return new ResError(['error' => 'خطا در ثبت اطلاعات', 'status' => 500]);
+        }
+        return new ResUser(User::find($user->id));
     }
 }

@@ -12,6 +12,7 @@ class User extends Authenticatable implements JWTSubject
 {
     use Notifiable, HasRoles;
     public $incrementing = false;
+    public $guard_name = 'api';
 
     /**
      * The attributes that are mass assignable.
@@ -19,7 +20,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'id','usr_username', 'usr_email', 'usr_password,','usr_avatar','usr_status',
+        'id','username', 'email', 'password','avatar','status',
     ];
 
     /**
@@ -61,5 +62,13 @@ class User extends Authenticatable implements JWTSubject
         self::creating(function ($model) {
             $model->id = (string) Uuid::generate(4);
         });
+    }
+    public function customer()
+    {
+        return $this->hasOne('App\Customer');
+    }
+    public function freelancer()
+    {
+        return $this->hasOne('App\Freelancer');
     }
 }

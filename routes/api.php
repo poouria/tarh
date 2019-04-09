@@ -19,12 +19,14 @@ use Illuminate\Http\Request;
 Route::group(['prefix' => 'v1'], function () {
 
     Route::group(['middleware' => 'auth:api'], function () {
+        //        Complete Registration as Customer
+        Route::post('/customer/register', 'Auth\CRegisterCustomer@Complete_Register');
+
+        //        Complete Registration as Freelancer
+        Route::post('/freelancer/register', 'Auth\CRegisterFreelancer@Complete_Register');
+
         Route::post('logout', 'Auth\LoginController@logout');
-
-        Route::get('/user', function (Request $request) {
-            return $request->user();
-        });
-
+        Route::get('/user', function (Request $request) {return $request->user();});
         Route::patch('settings/profile', 'Settings\ProfileController@update');
         Route::patch('settings/password', 'Settings\PasswordController@update');
     });
@@ -36,9 +38,11 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
         Route::post('password/reset', 'Auth\ResetPasswordController@reset');
 
-        Route::post('oauth/{provider}', 'Auth\OAuthController@redirectToProvider');
-        Route::get('oauth/{provider}/callback', 'Auth\OAuthController@handleProviderCallback')->name('oauth.callback');
     });
 
-});
 
+});
+Route::fallback(function(){
+    return response()->json([
+        'message' => 'صفحه مورد نظر پیدا نشد. در صورت اطمینان از صحت اطلاعات با پشتیبانی تماس بگیرید'], 404);
+});

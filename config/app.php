@@ -80,12 +80,10 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'fa',
     'locales' => [
-        'fa' => 'FA',
         'en' => 'EN',
-        'zh-CN' => '中文',
-        'es' => 'ES',
+        'fa' => 'FA',
     ],
     /*
     |--------------------------------------------------------------------------
@@ -98,7 +96,7 @@ return [
     |
     */
 
-    'fallback_locale' => 'en',
+    'fallback_locale' => 'fa',
 
     /*
     |--------------------------------------------------------------------------
@@ -180,7 +178,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Hekmatinasser\Verta\VertaServiceProvider::class,
-
+        L5Swagger\L5SwaggerServiceProvider::class,
     ],
 
     /*
